@@ -1,0 +1,9 @@
+[submodule "Servicio-libros-java17"]
+	path = Servicio-libros-java17
+	url = https://github.com/Giovannisabces/Servicio-libros-java17.git
+[submodule "servicio-locaciones-java17"]
+	path = servicio-locaciones-java17
+	url = https://github.com/Giovannisabces/servicio-locaciones-java17.git
+[submodule "servicio-predicas-java17"]
+	path = servicio-predicas-java17
+	url = https://github.com/Giovannisabces/servicio-predicas-java17.git
