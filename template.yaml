@@ -1,0 +1,160 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: |
+  servicios
+    Ubicaciones, Libros y Predicas.
+  Plataforma: java17 Plantilla SAM para TFM java17
+Globals:
+  Function:
+    Timeout: 30
+Resources:
+  ServiciosApiGateway:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: dev
+      Name: servicios-api-gateway
+      AlwaysDeploy: true
+  LocationFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: servicio-locaciones-java17/LocationFunction
+      Handler: location.App::handleRequest
+      Runtime: java17
+      FunctionName: LocationFunction
+      Architectures:
+        - arm64
+      MemorySize: 512
+      Events:
+        ApiEvents:
+          Type: Api
+          Properties:
+            Path: /location
+            Method: GET
+            RestApiId: !Ref ServiciosApiGateway
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: location
+      Environment:
+        Variables:
+          BOOKS_TABLE_NAME: !Ref location
+          BOOKS_TABLE_ARN: !GetAtt location.Arn
+  BookFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: servicio-libros-java17/BookFunction
+      Handler: book.App::handleRequest
+      Runtime: java17
+      FunctionName: BookFunction
+      Architectures:
+        - arm64
+      MemorySize: 512
+      Events:
+        ApiEvents:
+          Type: Api
+          Properties:
+            Path: /book
+            Method: GET
+            RestApiId: !Ref ServiciosApiGateway
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref books
+      Environment:
+        Variables:
+          BOOKS_TABLE_NAME: !Ref books
+          BOOKS_TABLE_ARN: !GetAtt books.Arn
+  PreachFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: servicio-predicas-java17/PreachFunction
+      Handler: preach.App::handleRequest
+      Runtime: java17
+      FunctionName: PreachFunction
+      Architectures:
+        - arm64
+      MemorySize: 512
+      Events:
+        ApiEvents:
+          Type: Api
+          Properties:
+            Path: /preach
+            Method: GET
+            RestApiId: !Ref ServiciosApiGateway
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref preach
+      Environment:
+        Variables:
+          BOOKS_TABLE_NAME: !Ref preach
+          BOOKS_TABLE_ARN: !GetAtt preach.Arn
+  location:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: location
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: 'N'
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      BillingMode: PROVISIONED
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+  books:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: book
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: 'N'
+        - AttributeName: serie
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+        - AttributeName: serie
+          KeyType: RANGE
+      BillingMode: PROVISIONED
+      ProvisionedThroughput:
+        ReadCapacityUnits: 10
+        WriteCapacityUnits: 15
+  preach:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: preach
+      AttributeDefinitions:
+        - AttributeName: date
+          AttributeType: S
+        - AttributeName: serie
+          AttributeType: S
+      KeySchema:
+        - AttributeName: date
+          KeyType: HASH
+        - AttributeName: serie
+          KeyType: RANGE
+      BillingMode: PROVISIONED
+      ProvisionedThroughput:
+        ReadCapacityUnits: 10
+        WriteCapacityUnits: 5
+Outputs:
+  ServiciosApiGateway:
+    Description: API Gateway endpoint URL for Prod stage for Location function
+    Value: !Sub https://${ServiciosApiGateway}.execute-api.${AWS::Region}.amazonaws.com/Prod/location/
+  LocationFunction:
+    Description: Location Lambda Function ARN
+    Value: !GetAtt LocationFunction.Arn
+  LocationFunctionIamRole:
+    Description: Implicit IAM Role created for Location function
+    Value: !GetAtt LocationFunctionRole.Arn
+  BookFunction:
+    Description: Book Lambda Function ARN
+    Value: !GetAtt BookFunction.Arn
+  BookFunctionIamRole:
+    Description: Implicit IAM Role created for Book function
+    Value: !GetAtt BookFunctionRole.Arn
+  PreachFunction:
+    Description: Preach Lambda Function ARN
+    Value: !GetAtt PreachFunction.Arn
+  PreachFunctionIamRole:
+    Description: Implicit IAM Role created for Preach function
+    Value: !GetAtt PreachFunctionRole.Arn

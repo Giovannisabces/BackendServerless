@@ -1,0 +1,157 @@
+openapi: "3.0.0"
+info:
+  title: "TFMServices"
+  description: "API REST encargado de gestionar los servicios Backend relacionados con iglesias, libros recomendados y ultimas predicaciones."
+  version: "1.0"
+servers:
+  - url: "https://zsc3axf6q8.execute-api.us-east-1.amazonaws.com/Dev/"
+paths:
+  /locations:
+    get:
+      summary: "Servicio encargado de devolver un listado de las iglesias con una profesion de fe similar."
+      responses:
+        '200':
+          description: "Respuesta exitosa"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  statusCode:
+                    type: "integer"
+                  headers:
+                    type: "object"
+                    properties:
+                      Access-Control-Allow-Headers:
+                        type: "string"
+                      Access-Control-Allow-Methods:
+                        type: "string"
+                      Access-Control-Allow-Origin:
+                        type: "string"
+                  body:
+                    type: "array"
+                    items:
+                      type: "object"
+                      properties:
+                        id:
+                          type: "integer"
+                        lat:
+                          type: "number"
+                        lng:
+                          type: "number"
+                        title:
+                          type: "string"
+                        direccion:
+                          type: "string"
+                        liderazgo:
+                          type: "string"
+                        movil:
+                          type: "string"
+                        email:
+                          type: "string"
+                        webpage:
+                          type: "string"
+                  base64Encoded:
+                    type: "boolean"
+  /book:
+    get:
+      summary: "Servicio encargado de devolver listado de los libros recomendados."
+      parameters:
+        - name: "id"
+          in: "query"
+          required: false
+          schema:
+            type: "string"
+        - name: "httpMethod"
+          in: "query"
+          required: false
+          schema:
+            type: "string"
+      responses:
+        '200':
+          description: "Respuesta exitosa"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  statusCode:
+                    type: "integer"
+                  headers:
+                    type: "object"
+                    properties:
+                      Access-Control-Allow-Headers:
+                        type: "string"
+                      Access-Control-Allow-Methods:
+                        type: "string"
+                      Access-Control-Allow-Origin:
+                        type: "string"
+                  body:
+                    type: "array"
+                    items:
+                      type: "object"
+                      properties:
+                        id:
+                          type: "integer"
+                        title:
+                          type: "string"
+                        autor:
+                          type: "string"
+                        serie:
+                          type: "string"
+                        content:
+                          type: "string"
+                        img:
+                          type: "string"
+                  base64Encoded:
+                    type: "boolean"
+  /preach:
+    get:
+      summary: "Servicio encargado de devolver listado información y URL's (contenido en texto y videos) de las predicaciones."
+      parameters:
+        - name: "id"
+          in: "query"
+          required: false
+          schema:
+            type: "string"
+        - name: "httpMethod"
+          in: "query"
+          required: false
+          schema:
+            type: "string"
+      responses:
+        '200':
+          description: "Respuesta exitosa"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  statusCode:
+                    type: "integer"
+                  headers:
+                    type: "object"
+                    properties:
+                      Access-Control-Allow-Origin:
+                        type: "string"
+                      Access-Control:
+                        type: "string"
+                  body:
+                    type: "array"
+                    items:
+                      type: "object"
+                      properties:
+                        id:
+                          type: "integer"
+                        date:
+                          type: "string"
+                        title:
+                          type: "string"
+                        autor:
+                          type: "string"
+                        serie:
+                          type: "string"
+                        url:
+                          type: "string"
+                  base64Encoded:
+                    type: "boolean"
